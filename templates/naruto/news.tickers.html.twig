@@ -1,0 +1,10 @@
+<div class="n-tickers">
+	<div class="n-tickers-head">Tickers</div>
+	{% for ticker in tickers %}
+	<div class="n-ticker">
+		<span class="n-ticker-dot">●</span>
+		<span class="n-ticker-date">{{ ticker.date|date("j M Y") }}</span>
+		<span class="n-ticker-body">{{ ticker.body|raw }}</span>
+	</div>
+	{% endfor %}
+</div>
