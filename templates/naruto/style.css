@@ -744,7 +744,7 @@ tr.Even td  { background: var(--bg-row-b); }
 	left: 6px;
 	margin: 0;
 }
-.n-content-body label[for^="vocation"] {
+.n-content-body label[for^="vocation"]:not([for="vocationFilter"]) {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -753,7 +753,7 @@ tr.Even td  { background: var(--bg-row-b); }
 	white-space: normal;
 	font-weight: 600;
 }
-.n-content-body label[for^="vocation"]::before {
+.n-content-body label[for^="vocation"]:not([for="vocationFilter"])::before {
 	content: '';
 	display: block;
 	width: 72px;
@@ -764,19 +764,220 @@ tr.Even td  { background: var(--bg-row-b); }
 	filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
 	transition: transform 0.2s ease, filter 0.2s ease;
 }
-.n-content-body label[for^="vocation"]:hover::before { transform: translateY(-2px); }
-.n-content-body :has(> input[name="vocation"]:checked) > label[for^="vocation"]::before {
+.n-content-body label[for^="vocation"]:not([for="vocationFilter"]):hover::before { transform: translateY(-2px); }
+.n-content-body :has(> input[name="vocation"]:checked) > label[for^="vocation"]:not([for="vocationFilter"])::before {
 	filter: drop-shadow(0 0 10px rgba(0, 195, 255, 0.55)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
 }
-.n-content-body :has(> input[name="vocation"]:checked) > label[for^="vocation"] { color: var(--text-bright); }
+.n-content-body :has(> input[name="vocation"]:checked) > label[for^="vocation"]:not([for="vocationFilter"]) { color: var(--text-bright); }
 @media (prefers-reduced-motion: reduce) {
-	.n-content-body label[for^="vocation"]::before { transition: none; }
-	.n-content-body label[for^="vocation"]:hover::before { transform: none; }
+	.n-content-body label[for^="vocation"]:not([for="vocationFilter"])::before { transition: none; }
+	.n-content-body label[for^="vocation"]:not([for="vocationFilter"]):hover::before { transform: none; }
 }
 
 @media (max-width: 560px) {
 	.n-content-body td:has(> .OptionContainer input[name="vocation"]),
 	.n-content-body table:has(> tbody > tr > td > input[name="vocation"]) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Highscores boxes (templates/naruto/highscores.html.twig): full width, links as chips */
+.n-hs-box {
+	margin-bottom: 16px;
+	border: 1px solid var(--border-soft);
+	border-radius: 4px;
+	overflow: hidden;
+	background: rgba(0, 195, 255, 0.04);
+}
+.n-hs-box-title {
+	background: var(--steel);
+	color: var(--text-bright);
+	font-weight: bold;
+	font-size: 12px;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	padding: 10px 14px;
+	border-bottom: 2px solid var(--cyan);
+}
+.n-hs-box-links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 8px;
+	padding: 12px 14px;
+}
+.n-hs-box-links a {
+	padding: 5px 10px;
+	border: 1px solid var(--border-soft);
+	border-radius: 4px;
+	color: var(--text);
+	text-decoration: none;
+	transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+}
+.n-hs-box-links a:hover {
+	border-color: var(--border);
+	background: rgba(0, 195, 255, 0.08);
+	color: var(--text-bright);
+}
+.n-hs-box-links a.active {
+	border-color: var(--cyan);
+	background: rgba(0, 195, 255, 0.14);
+	color: var(--text-bright);
+}
+/* Skill group headings */
+.n-hs-group-title {
+	padding: 10px 14px 0;
+	color: var(--cyan);
+	font-size: 11px;
+	font-weight: bold;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+.n-hs-box-links + .n-hs-group-title { border-top: 1px solid var(--border-soft); }
+
+/* Skill card: name on top, image below */
+.n-hs-box-links a {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 6px;
+	min-width: 84px;
+	text-align: center;
+}
+.n-hs-skill-name { font-weight: 600; }
+.n-hs-skill-img {
+	display: block;
+	/* native size, no scaling */
+	width: auto;
+	height: auto;
+	max-width: none;
+	filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
+	transition: transform 0.2s ease;
+}
+.n-hs-box-links a:hover .n-hs-skill-img { transform: translateY(-2px); }
+@media (prefers-reduced-motion: reduce) {
+	.n-hs-skill-img { transition: none; }
+	.n-hs-box-links a:hover .n-hs-skill-img { transform: none; }
+}
+
+/* Highscores table (own markup, no cellspacing attr so global MyAAC table rules don't apply) */
+.n-hs-table-wrap {
+	border: 1px solid var(--border-soft);
+	border-radius: 4px;
+	overflow: hidden;
+	background: rgba(0, 195, 255, 0.02);
+}
+.n-content-body .n-hs-table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+.n-content-body .n-hs-table th,
+.n-content-body .n-hs-table td {
+	padding: 10px 12px;
+	border-bottom: 1px solid var(--border-soft);
+	vertical-align: middle;
+	text-align: left;
+}
+.n-content-body .n-hs-table thead th {
+	background: var(--steel);
+	color: var(--text-bright);
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	border-bottom: 2px solid var(--cyan);
+	white-space: nowrap;
+}
+.n-content-body .n-hs-table tbody tr:nth-child(odd) td  { background: var(--bg-row-b); }
+.n-content-body .n-hs-table tbody tr:nth-child(even) td { background: var(--bg-row-a); }
+.n-content-body .n-hs-table tbody tr:hover td { background: rgba(0, 195, 255, 0.07); }
+.n-content-body .n-hs-table tbody tr:last-child td { border-bottom: 0; }
+
+/* shrink-to-content columns; Name takes the rest */
+.n-hs-col-rank, .n-hs-col-flag, .n-hs-col-outfit, .n-hs-col-num, .n-hs-col-guild { width: 1%; white-space: nowrap; }
+.n-content-body .n-hs-table .n-hs-col-rank { text-align: right; padding-right: 6px; }
+.n-content-body .n-hs-table td.n-hs-col-rank { color: var(--text); font-weight: 600; }
+.n-content-body .n-hs-table .n-hs-col-num { text-align: right; }
+.n-content-body .n-hs-table .n-hs-col-outfit { padding-top: 0; padding-bottom: 0; }
+/* outfit gif is 64x64 with the sprite in the bottom-right; trim vertical slack, never overlap neighbours */
+.n-hs-outfit-img { display: block; width: 48px; height: 48px; object-fit: none; object-position: right bottom; margin: -6px 0; }
+.n-content-body .n-hs-table td.n-hs-value { color: var(--text-bright); font-weight: 600; }
+.n-hs-col-flag img { display: block; }
+/* global img{max-width:100%} collapses images inside 1%-wide shrink cells */
+.n-hs-table img { max-width: none; }
+.n-content-body .n-hs-table td.n-hs-col-points { color: var(--text-dim); }
+
+/* top 3: accent on rank number, #1 gets a thin left bar */
+.n-content-body .n-hs-table tr.n-hs-top td.n-hs-col-rank { color: var(--cyan); }
+.n-content-body .n-hs-table tr.n-hs-top-1 td:first-child { box-shadow: inset 3px 0 0 var(--cyan); }
+.n-content-body .n-hs-table tr.n-hs-top-1 td.n-hs-col-rank { font-size: 15px; }
+
+/* name + vocation */
+.n-hs-player {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	color: var(--text-bright);
+	font-weight: 600;
+	text-decoration: none;
+}
+.n-hs-player:hover { color: var(--cyan-soft); }
+.n-hs-vocation { display: block; margin-top: 2px; color: var(--text-muted); font-size: 11px; }
+.n-hs-col-name:has(.n-hs-status) .n-hs-vocation { padding-left: 15px; }
+
+/* online status: real state, not decoration */
+.n-hs-status {
+	flex: none;
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--text-muted);
+	opacity: 0.6;
+}
+.n-hs-status.is-online { background: var(--green); opacity: 1; box-shadow: 0 0 0 2px rgba(77, 255, 124, 0.15); }
+
+/* guild */
+.n-content-body .n-hs-table .n-hs-col-guild a { color: var(--text-dim); text-decoration: none; }
+.n-content-body .n-hs-table .n-hs-col-guild a:hover { color: var(--cyan-soft); }
+.n-hs-none { color: var(--text-muted); }
+
+/* empty state */
+.n-content-body .n-hs-table td.n-hs-empty {
+	padding: 36px 16px;
+	text-align: center;
+	color: var(--text-dim);
+	background: transparent;
+}
+
+/* screen-reader-only header text */
+.n-hs-sr {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+}
+
+/* pagination */
+.n-hs-pager { display: flex; gap: 8px; margin-top: 12px; }
+.n-hs-pager-next { margin-left: auto; }
+.n-hs-pager-btn {
+	padding: 7px 14px;
+	border: 1px solid var(--border-soft);
+	border-radius: 4px;
+	color: var(--text);
+	text-decoration: none;
+	font-size: 12px;
+	font-weight: 600;
+	transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+}
+.n-hs-pager-btn:hover { border-color: var(--border); background: rgba(0, 195, 255, 0.08); color: var(--text-bright); }
+.n-hs-pager-btn:active { transform: translateY(1px); }
+
+/* mobile: drop outfit + points, tighten padding */
+@media (max-width: 600px) {
+	.n-content-body .n-hs-table th,
+	.n-content-body .n-hs-table td { padding: 8px; }
+	.n-hs-col-outfit, .n-hs-col-points { display: none; }
+}
+@media (max-width: 420px) {
+	.n-hs-col-guild { display: none; }
 }
 
 /* Highscores helpers */

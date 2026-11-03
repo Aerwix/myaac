@@ -1,0 +1,81 @@
+{# Naruto override of system/templates/highscores.html.twig: only the skill box (full width) above the ranking #}
+<div class="n-highscores">
+	<div style="text-align:center"><h2>Ranking for {{ skillName }}{% if vocation is not null %} ({{ vocation }}){% endif %} on {{ config.lua.serverName }}</h2></div><br/>
+
+	<div class="n-hs-box">
+		<div class="n-hs-box-title">Choose a skill</div>
+		{% set skillIds = {'magic': constant('POT::SKILL__MAGLEVEL'), 'shield': constant('POT::SKILL_SHIELD'), 'distance': constant('POT::SKILL_DIST'), 'fishing': constant('POT::SKILL_FISH'), 'club': constant('POT::SKILL_CLUB'), 'sword': constant('POT::SKILL_SWORD'), 'axe': constant('POT::SKILL_AXE'), 'fist': constant('POT::SKILL_FIST')} %}
+		{# groups in display order: title + skill keys #}
+		{% set skillGroups = [
+			{'title': 'General', 'links': ['experience', 'magic', 'fist']},
+			{'title': 'Combat Skills', 'links': ['club', 'sword', 'distance']},
+			{'title': 'Special Skills', 'links': ['fishing', 'shield']}
+		] %}
+		{% for group in skillGroups %}
+		<div class="n-hs-group-title">{{ group.title }}</div>
+		<div class="n-hs-box-links">
+			{% for link in group.links|filter(l => types[l] is defined) %}
+			{% set name = types[link] %}
+				{% set customName = skillIds[link] is defined and config.skill_names[skillIds[link]] is defined ? config.skill_names[skillIds[link]] : name %}
+				{% set imgName = (config.naruto_skill_image_aliases[customName] ?? customName)|lower %}
+				{% set imgFile = config.naruto_skill_images[imgName] ?? null %}
+				<a href="{{ getLink('highscores') }}/{{ link|urlencode }}{% if vocation is not null %}/{{ vocation|urlencode }}{% endif %}" class="size_xs{% if list is not null and list == link %} active{% endif %}">
+					<span class="n-hs-skill-name">{{ customName }}</span>
+					{% if imgFile is not null %}
+						<img class="n-hs-skill-img" src="{{ constant('BASE_URL') }}{{ template_path }}/images/skills/{{ imgFile|url_encode }}" alt="" loading="lazy">
+					{% endif %}
+				</a>
+			{% endfor %}
+		</div>
+		{% endfor %}
+	</div>
+
+	{% set showFlag = setting('core.account_country') %}
+	{% set showOutfit = setting('core.highscores_outfit') %}
+	{% set showPoints = skill == constant('POT::SKILL__LEVEL') %}
+	{% set showOnline = setting('core.highscores_online_status') %}
+
+	<div class="n-hs-table-wrap">
+	<table class="n-hs-table">
+		<thead>
+			<tr>
+				<th class="n-hs-col-rank" scope="col">Rank</th>
+				{% if showFlag %}<th class="n-hs-col-flag" scope="col"><span class="n-hs-sr">Country</span></th>{% endif %}
+				{% if showOutfit %}<th class="n-hs-col-outfit" scope="col"><span class="n-hs-sr">Outfit</span></th>{% endif %}
+				<th class="n-hs-col-name" scope="col">Name</th>
+				<th class="n-hs-col-num" scope="col">{{ levelName }}</th>
+				{% if showPoints %}<th class="n-hs-col-num n-hs-col-points" scope="col">Points</th>{% endif %}
+				<th class="n-hs-col-guild" scope="col">Guild</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for player in highscores %}
+			<tr class="{% if player.rank <= 3 %}n-hs-top n-hs-top-{{ player.rank }}{% endif %}">
+				<td class="n-hs-col-rank">{{ player.rank }}</td>
+				{% if showFlag %}<td class="n-hs-col-flag">{{ player.flag|raw }}</td>{% endif %}
+				{% if showOutfit %}<td class="n-hs-col-outfit"><img class="n-hs-outfit-img" src="{{ player.outfit_url }}" alt="" width="48" height="48" loading="lazy"></td>{% endif %}
+				<td class="n-hs-col-name">
+					<a class="n-hs-player" href="{{ player.link }}">
+						{% if showOnline %}<span class="n-hs-status{% if player.online > 0 %} is-online{% endif %}" title="{{ player.online > 0 ? 'Online' : 'Offline' }}"></span>{% endif %}
+						{{ player.name }}
+					</a>
+					{% if setting('core.highscores_vocation') %}<span class="n-hs-vocation">{{ player.vocation }}</span>{% endif %}
+				</td>
+				<td class="n-hs-col-num n-hs-value">{{ player.value }}</td>
+				{% if showPoints %}<td class="n-hs-col-num n-hs-col-points">{{ player.experience }}</td>{% endif %}
+				<td class="n-hs-col-guild">{% if player.guild %}<a href="{{ player.guild_link }}">{{ player.guild }}</a>{% else %}<span class="n-hs-none">-</span>{% endif %}</td>
+			</tr>
+		{% else %}
+			<tr><td class="n-hs-empty" colspan="7">No players ranked in {{ skillName }} yet.</td></tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	</div>
+
+	{% if linkPreviousPage|length > 0 or linkNextPage|length > 0 %}
+	<nav class="n-hs-pager" aria-label="Highscores pages">
+		{% if linkPreviousPage|length > 0 %}<a href="{{ linkPreviousPage }}" class="n-hs-pager-btn">&lsaquo; Previous</a>{% endif %}
+		{% if linkNextPage|length > 0 %}<a href="{{ linkNextPage }}" class="n-hs-pager-btn n-hs-pager-next">Next &rsaquo;</a>{% endif %}
+	</nav>
+	{% endif %}
+</div>

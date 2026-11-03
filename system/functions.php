@@ -690,6 +690,12 @@ function getCreatureName($killer, $showStatus = false, $extendedInfo = false)
  */
 function getSkillName($skillId, $suffix = true)
 {
+	// custom names (e.g. set by template config.php)
+	$customNames = config('skill_names');
+	if (is_array($customNames) && isset($customNames[$skillId])) {
+		return $customNames[$skillId];
+	}
+
 	switch($skillId)
 	{
 		case POT::SKILL_FIST:
