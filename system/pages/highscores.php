@@ -254,20 +254,8 @@ foreach($highscores as $id => &$player)
 		$player['flag'] = getFlagImage($player['country']);
 		$player['outfit'] = '<img style="position:absolute;margin-top:-50px;margin-left:-30px" src="' . $player['outfit_url'] . '" alt="" />';
 
-		if ($skill != POT::SKILL__LEVEL) {
-			if (isset($lastValue) && $lastValue == $player['value']) {
-				$player['rank'] = $lastRank;
-			}
-			else {
-				$player['rank'] = $offset + $i;
-			}
-
-			$lastRank = $player['rank'] ;
-			$lastValue = $player['value'];
-		}
-		else {
-			$player['rank'] = $offset + $i;
-		}
+		// rank = position in the list (ties no longer share a rank; order already breaks ties by tries/manaspent/experience)
+		$player['rank'] = $offset + $i;
 	}
 	else {
 		unset($highscores[$id]);
@@ -275,6 +263,33 @@ foreach($highscores as $id => &$player)
 		break;
 	}
 }
+
+unset($player);
+
+// guild name for each listed player (empty if none)
+$guildPlayerIds = array_filter(array_map('intval', array_column($highscores, 'id')));
+$guildNames = [];
+if (!empty($guildPlayerIds)) {
+	$idList = implode(',', $guildPlayerIds);
+	if ($db->hasTable('guild_membership')) {
+		$guildQuery = $db->query('SELECT `gm`.`player_id`, `g`.`name` FROM `guild_membership` `gm` JOIN `guilds` `g` ON `g`.`id` = `gm`.`guild_id` WHERE `gm`.`player_id` IN (' . $idList . ')');
+	}
+	else if ($db->hasColumn('players', 'rank_id')) {
+		$guildQuery = $db->query('SELECT `p`.`id` AS `player_id`, `g`.`name` FROM `players` `p` JOIN `guild_ranks` `gr` ON `gr`.`id` = `p`.`rank_id` JOIN `guilds` `g` ON `g`.`id` = `gr`.`guild_id` WHERE `p`.`id` IN (' . $idList . ')');
+	}
+
+	if (isset($guildQuery) && $guildQuery) {
+		foreach ($guildQuery->fetchAll() as $guildRow) {
+			$guildNames[(int)$guildRow['player_id']] = $guildRow['name'];
+		}
+	}
+}
+
+foreach ($highscores as &$player) {
+	$player['guild'] = $guildNames[(int)$player['id']] ?? null;
+	$player['guild_link'] = $player['guild'] !== null ? getGuildLink($player['guild'], false) : null;
+}
+unset($player);
 
 //link to previous page if actual page is not first
 $linkPreviousPage = '';
