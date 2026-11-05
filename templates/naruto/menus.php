@@ -15,6 +15,7 @@ return [
 		'Server Info'   => 'ots-info',
 		'Bosses [NEW]'  => 'bosses',
 		'Quests [NEW]'  => 'quests',
+		'Jutsus [NEW]'  => 'jutsus',
 		'World Map'     => 'world-map',
 	],
 ];

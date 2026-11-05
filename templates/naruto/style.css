@@ -1238,3 +1238,137 @@ label { color: var(--text-dim); font-size: 12px; }
 @media (prefers-reduced-motion: reduce) {
 	.n-dot-online, .badge-new { animation: none; }
 }
+
+/* Jutsus page (templates/naruto/jutsus.html.twig): clan chips + level table */
+.n-jt-clans {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 8px;
+	padding: 12px 14px;
+}
+.n-jt-clan {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 40px;
+	padding: 4px 10px 4px 4px;
+	border: 1px solid var(--border-soft);
+	border-radius: 4px;
+	color: var(--text);
+	text-decoration: none;
+	transition: border-color 0.15s, background-color 0.15s, color 0.15s;
+}
+.n-jt-clan:first-child { padding-left: 10px; }
+.n-jt-clan:hover { border-color: var(--border); background: rgba(0, 195, 255, 0.08); color: var(--text-bright); }
+.n-jt-clan.active { border-color: var(--cyan); background: rgba(0, 195, 255, 0.14); color: var(--text-bright); }
+.n-jt-clan-img {
+	width: 30px;
+	height: 30px;
+	max-width: none;
+	border-radius: 50%;
+	object-fit: cover;
+	object-position: top;
+	background: var(--bg-panel-a);
+}
+.n-jt-clan-name { font-weight: 600; }
+
+.n-content-body .n-jt-table td { vertical-align: top; }
+.n-content-body .n-jt-table .n-jt-col-level { width: 1%; white-space: nowrap; text-align: right; }
+.n-jt-level { color: var(--cyan); font-weight: 700; }
+.n-jt-name { color: var(--text-bright); font-weight: 600; }
+.n-jt-tag {
+	display: inline-block;
+	margin-left: 6px;
+	padding: 1px 6px;
+	border: 1px solid rgba(255, 107, 53, 0.4);
+	border-radius: 3px;
+	color: var(--orange);
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	vertical-align: 1px;
+}
+.n-jt-desc { display: block; margin-top: 3px; color: var(--text-dim); font-size: 12px; }
+.n-content-body .n-jt-table tr.n-jt-is-clan td:first-child { box-shadow: inset 3px 0 0 var(--orange); }
+
+/* Jutsu evolutions: progression track (dot per level, line between, last = max stage) */
+.n-jt-tag { background: rgba(255, 107, 53, 0.1); }
+.n-jt-tag-evo { border-color: rgba(100, 255, 218, 0.45); background: rgba(100, 255, 218, 0.1); color: var(--mint); }
+.n-content-body .n-jt-evo {
+	--evo-dot: 10px;
+	display: flex;
+	margin: 12px 0 2px;
+	padding: 0;
+	list-style: none;
+}
+.n-content-body .n-jt-evo-step {
+	margin: 0;
+	position: relative;
+	flex: 1 1 0;
+	min-width: 0;
+	max-width: 150px;
+	padding: calc(var(--evo-dot) + 8px) 10px 0 0;
+}
+/* connector to next step */
+.n-jt-evo-step::after {
+	content: "";
+	position: absolute;
+	top: calc(var(--evo-dot) / 2 - 1px);
+	left: var(--evo-dot);
+	right: 0;
+	height: 2px;
+	background: linear-gradient(90deg, rgba(0, 195, 255, 0.45), rgba(0, 195, 255, 0.15));
+}
+.n-jt-evo-step:last-child::after { display: none; }
+/* dot */
+.n-jt-evo-step::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: var(--evo-dot);
+	height: var(--evo-dot);
+	border: 2px solid var(--cyan);
+	border-radius: 50%;
+	background: var(--bg-page);
+}
+.n-jt-evo-step:last-child::before {
+	background: var(--cyan);
+	box-shadow: 0 0 0 3px rgba(0, 195, 255, 0.15), 0 0 8px var(--cyan-glow);
+}
+.n-jt-evo-level {
+	display: block;
+	color: var(--cyan);
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	white-space: nowrap;
+}
+.n-jt-evo-text {
+	display: block;
+	margin-top: 2px;
+	color: var(--text-dim);
+	font-size: 12px;
+	line-height: 1.35;
+	overflow-wrap: anywhere;
+}
+.n-jt-evo-step:last-child .n-jt-evo-text { color: var(--text-bright); }
+
+/* narrow screens: vertical track */
+@media (max-width: 560px) {
+	.n-content-body .n-jt-evo { flex-direction: column; gap: 10px; }
+	.n-content-body .n-jt-evo-step { max-width: none; padding: 0 0 0 calc(var(--evo-dot) + 10px); }
+	.n-jt-evo-step::before { top: 3px; }
+	.n-jt-evo-step::after {
+		top: calc(var(--evo-dot) + 3px);
+		bottom: -10px;
+		left: calc(var(--evo-dot) / 2 - 1px);
+		right: auto;
+		width: 2px;
+		height: auto;
+		background: rgba(0, 195, 255, 0.3);
+	}
+	.n-jt-evo-level, .n-jt-evo-text { display: inline; }
+	.n-jt-evo-text { margin: 0 0 0 6px; }
+}

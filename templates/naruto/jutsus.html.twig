@@ -1,0 +1,54 @@
+{# Jutsus page (templates/naruto/pages/jutsus.php) #}
+<div class="n-jutsus">
+	<div style="text-align:center"><h2>Jutsus{% if clan %} &middot; {{ clan }}{% endif %}</h2></div><br/>
+
+	{% if clans|length > 0 %}
+	<div class="n-hs-box">
+		<div class="n-hs-box-title">Choose a clan</div>
+		<div class="n-jt-clans">
+			<a href="{{ getLink('jutsus') }}" class="n-jt-clan{% if not clan %} active{% endif %}">
+				<span class="n-jt-clan-name">All</span>
+			</a>
+			{% for name, img in clans %}
+			<a href="{{ getLink('jutsus') }}?clan={{ name|url_encode }}" class="n-jt-clan{% if clan == name %} active{% endif %}">
+				<img class="n-jt-clan-img" src="{{ constant('BASE_URL') }}{{ template_path }}/images/characters/{{ img|url_encode }}" alt="" loading="lazy">
+				<span class="n-jt-clan-name">{{ name }}</span>
+			</a>
+			{% endfor %}
+		</div>
+	</div>
+	{% endif %}
+
+	<div class="n-hs-table-wrap">
+	<table class="n-hs-table n-jt-table">
+		<thead>
+			<tr>
+				<th class="n-jt-col-level" scope="col">Level</th>
+				<th scope="col">Jutsu</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for j in rows %}
+			<tr class="{% if j.clan %}n-jt-is-clan{% endif %}">
+				<td class="n-jt-col-level">{% if j.level is not null %}<span class="n-jt-level">Lv. {{ j.level }}</span>{% else %}<span class="n-hs-none">-</span>{% endif %}</td>
+				<td>
+					<span class="n-jt-name">{{ j.name }}</span>
+					{% if j.clan %}<span class="n-jt-tag">Clan</span>{% endif %}
+					{% if j.evolutions|length > 1 %}<span class="n-jt-tag n-jt-tag-evo">Evolutive</span>{% endif %}
+					{% if j.description is not empty %}<span class="n-jt-desc">{{ j.description }}</span>{% endif %}
+					{% if j.evolutions|length > 0 %}
+					<ol class="n-jt-evo" aria-label="{{ j.name }} evolutions">
+						{% for e in j.evolutions %}
+						<li class="n-jt-evo-step"><span class="n-jt-evo-level">Lv. {{ e.level }}</span><span class="n-jt-evo-text">{{ e.text }}</span></li>
+						{% endfor %}
+					</ol>
+					{% endif %}
+				</td>
+			</tr>
+		{% else %}
+			<tr><td class="n-hs-empty" colspan="2">No jutsus yet.</td></tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	</div>
+</div>
