@@ -42,7 +42,7 @@ return [
 					['level' => 80, 'text' => '8 Targets'],
 				],
 	],
-		['level' => null, 'name' => 'Clan Special',      'description' => 'Signature technique of the clan.'],
+		['level' => 75, 'name' => 'Chakra Wave',      'description' => 'Unleash a surging wave of chakra in the direction you’re facing, striking every enemy caught in its path.'],
 	],
 
 	// Clan specific jutsus. Key = vocation name exactly as in config (e.g. 'Naruto').
