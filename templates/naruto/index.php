@@ -170,6 +170,18 @@ $_topNav = [
 		<!-- Community / Library (Admin → Menus) -->
 		<?php
 		$_menus = get_template_menus();
+
+		// Auto-seed: if this template has no menus in DB yet (e.g. fresh install
+		// or template switched in Settings), load them from menus.php.
+		if (empty($_menus) && !empty($config['menus'])) {
+			\MyAAC\Plugins::installMenus($template_name, $config['menus']);
+			$_cache = \MyAAC\Cache\Cache::getInstance();
+			if ($_cache->enabled()) {
+				$_cache->delete('template_menus_' . $template_name);
+			}
+			$_menus = get_template_menus();
+		}
+
 		foreach ($config['menu_categories'] as $id => $cat):
 			if (empty($_menus[$id])) continue;
 		?>
