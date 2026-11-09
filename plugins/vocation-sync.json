@@ -1,0 +1,17 @@
+{
+	"name": "Vocation Sync",
+	"description": "Reads vocations.xml from server_path and keeps the Vocation Names, Vocations Amount and Character Samples settings in sync. Only samples that exist in the players table are offered.",
+	"version": "1.0",
+	"author": "Aerwix",
+	"contact": "",
+	"hooks": {
+		"vocation-sync-startup": {
+			"type": "STARTUP",
+			"file": "plugins/vocation-sync/startup.php"
+		}
+	},
+	"uninstall": [
+		"plugins/vocation-sync.json",
+		"plugins/vocation-sync"
+	]
+}
