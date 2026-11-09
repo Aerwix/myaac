@@ -33,7 +33,8 @@ if (!function_exists('vocationSyncRun')) {
 		}
 
 		$cache = Cache::getInstance();
-		$cacheKey = 'vocation_sync_' . md5($file . '|' . filemtime($file));
+		// invalidated when vocations.xml or this plugin changes
+		$cacheKey = 'vocation_sync_' . md5($file . '|' . filemtime($file) . '|' . filemtime(__FILE__));
 		if (!$force && $cache->enabled()) {
 			$tmp = '';
 			if ($cache->fetch($cacheKey, $tmp)) {
@@ -79,9 +80,9 @@ if (!function_exists('vocationSyncRun')) {
 		$existing = [];
 		if (!empty($base)) {
 			$quoted = array_map(fn($name) => $db->quote($name . VOCATION_SYNC_SAMPLE_SUFFIX), $base);
-			$query = $db->query('SELECT `name` FROM `players` WHERE `name` IN (' . implode(',', $quoted) . ')');
+			$query = $db->query('SELECT `id`, `name` FROM `players` WHERE `name` IN (' . implode(',', $quoted) . ')');
 			foreach ($query->fetchAll() as $row) {
-				$existing[$row['name']] = true;
+				$existing[$row['name']] = (int)$row['id'];
 			}
 		}
 
@@ -105,15 +106,21 @@ if (!function_exists('vocationSyncRun')) {
 			'vocations_amount' => (string)count($base),
 		];
 
+		$current = SettingsModel::where('name', 'core')
+			->whereIn('key', ['vocations', 'vocations_amount', 'character_samples', 'highscores_ids_hidden'])
+			->pluck('value', 'key')
+			->toArray();
+
 		// keep MyAAC defaults if no sample exists yet
 		if (!empty($samples)) {
 			$wanted['character_samples'] = implode("\n", $samples);
-		}
 
-		$current = SettingsModel::where('name', 'core')
-			->whereIn('key', array_keys($wanted))
-			->pluck('value', 'key')
-			->toArray();
+			// hide samples on highscores, keeping any ids added by hand in admin
+			$hidden = array_filter(array_map('trim', explode(',', $current['highscores_ids_hidden'] ?? '0')), 'strlen');
+			$hidden = array_unique(array_merge($hidden, array_map('strval', array_values($existing))));
+			sort($hidden, SORT_NUMERIC);
+			$wanted['highscores_ids_hidden'] = implode(',', $hidden);
+		}
 
 		$changed = false;
 		foreach ($wanted as $key => $value) {
