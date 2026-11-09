@@ -75,6 +75,8 @@ plugins/*
 !plugins/account-create-hint
 !plugins/email-confirmed-reward.json
 !plugins/email-confirmed-reward
+!plugins/vocation-sync.json
+!plugins/vocation-sync
 landing
 
 # system
