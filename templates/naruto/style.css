@@ -675,10 +675,10 @@ tr.Even td  { background: var(--bg-row-b); }
 .OptionContainer label { color: var(--text); font-size: 12px; cursor: pointer; }
 .OptionContainer input[type="radio"] { accent-color: var(--cyan); cursor: pointer; }
 
-/* Vocation picker: 4 per row */
+/* Vocation picker: 5 per row */
 .n-content-body td:has(> .OptionContainer input[name="vocation"]) {
 	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
+	grid-template-columns: repeat(5, minmax(0, 1fr));
 	gap: 8px 12px;
 	white-space: normal;
 }
@@ -698,11 +698,54 @@ tr.Even td  { background: var(--bg-row-b); }
 	border-color: var(--cyan);
 	background: rgba(0, 195, 255, 0.14);
 }
-/* Character create: one <tr><td><input/></td></tr> per vocation → same 4-col grid */
+/* Character create: one <tr><td><input/></td></tr> per vocation → 5-col grid */
 .n-content-body table:has(> tbody > tr > td > input[name="vocation"]) {
 	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
+	grid-template-columns: repeat(5, minmax(0, 1fr));
 	gap: 8px 12px;
+}
+
+/* Character create: title above the vocation grid */
+.n-voc-picker { padding: 14px 4px 6px; }
+.n-voc-title {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	margin: 0 0 16px;
+	font-family: var(--font-ui);
+	font-size: 22px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--text-bright);
+	text-shadow: 0 0 12px var(--cyan-glow);
+}
+.n-voc-title span { white-space: nowrap; }
+.n-content-body td > .n-voc-title { margin: 14px 0 8px; }
+.n-voc-title--error { color: var(--red-soft); text-shadow: 0 0 12px rgba(255, 85, 85, 0.45); }
+.n-voc-title::before,
+.n-voc-title::after {
+	content: '';
+	flex: 1;
+	height: 2px;
+	background: linear-gradient(90deg, transparent, var(--cyan));
+}
+.n-voc-title::after { background: linear-gradient(90deg, var(--cyan), transparent); }
+.n-voc-title span::after {
+	content: '';
+	display: block;
+	height: 2px;
+	margin-top: 4px;
+	background: var(--orange);
+	border-radius: 2px;
+}
+
+@media (max-width: 820px) {
+	.n-content-body td:has(> .OptionContainer input[name="vocation"]),
+	.n-content-body table:has(> tbody > tr > td > input[name="vocation"]) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+	.n-voc-title { font-size: 17px; gap: 8px; }
 }
 .n-content-body table:has(> tbody > tr > td > input[name="vocation"]) > tbody,
 .n-content-body table:has(> tbody > tr > td > input[name="vocation"]) > tbody > tr { display: contents; }
