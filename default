@@ -1,0 +1,50 @@
+# Este archivo va en /etc/nginx/sites-available/default
+# sudo mv /var/www/html/default /etc/nginx/sites-available/default
+
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    root /var/www/html;
+
+    index index.php index.html index.htm index.nginx-debian.html;
+
+    server_name _;
+
+    client_max_body_size 10M;
+
+    # certbot / let's encrypt
+    location ^~ /.well-known/ {
+        allow all;
+    }
+
+    # MyAAC: bloquear logs/cache/config
+    location ~ /system {
+        deny all;
+    }
+
+    # bloquear CHANGELOG.md, composer.json, .dist, .sql
+    location ~ \.(md|json|dist|sql)$ {
+        deny all;
+    }
+
+    # bloquear .htaccess, .git, etc.
+    location ~ /\. {
+        deny all;
+    }
+
+    location /updater/ {
+        try_files $uri $uri/ /updater/updater.php?$query_string;
+        index updater.php;
+    }
+
+    # MyAAC friendly URLs (/jutsus, /index.php/news, ...)
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+    }
+}
