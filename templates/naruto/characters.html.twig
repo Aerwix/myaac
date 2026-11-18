@@ -1,0 +1,293 @@
+<script type="text/javascript" src="tools/js/tipped.js"></script>
+<link rel="stylesheet" type="text/css" href="tools/css/tipped.css"/>
+<script>
+	$(document).ready(function() {
+	    Tipped.create('.item_image');
+	});
+</script>
+
+{% set rank = shinobi_rank(player) %}
+<div class="n-cp">
+	{{ hook('HOOK_CHARACTERS_BEFORE_INFORMATIONS') }}
+
+	{# ═══ HERO ═══ #}
+	<section class="n-cp-hero{% if player.isOnline() %} is-online{% endif %}{% if rank %} n-cp-rank-{{ rank.id }}{% endif %}">
+		<div class="n-cp-hero-bg" style="background-image:url('{{ vocation_image(vocation) }}')"></div>
+		<div class="n-cp-portrait">
+			<img src="{{ vocation_image(vocation) }}" alt="{{ vocation }}">
+			{% if rank %}
+				<span class="n-cp-seal" title="Shinobi Rank: {{ rank.letter }} · {{ rank.name }}"><b>{{ rank.letter }}</b></span>
+			{% endif %}
+			{% if config.characters.outfit and outfit %}
+				<img class="n-cp-outfit" src="{{ outfit }}" alt="player outfit" loading="lazy">
+			{% endif %}
+		</div>
+		<div class="n-cp-head">
+			<div class="n-cp-status">
+				<span class="n-cp-dot"></span>{% if player.isOnline() %}Online{% else %}Offline{% endif %}
+			</div>
+			<h1 class="n-cp-name">{{ flag|raw }} {{ player.getName() }}</h1>
+			{% if oldName %}<div class="n-cp-oldname">{{ oldName }}</div>{% endif %}
+			<div class="n-cp-sub">
+				<span class="n-cp-voc">{{ vocation }}</span>
+				{% if config.characters.level %}<span class="n-cp-sep">·</span><span>Level <b>{{ player.getLevel() }}</b></span>{% endif %}
+				{% if town %}<span class="n-cp-sep">·</span><span>{{ town }}</span>{% endif %}
+			</div>
+			<div class="n-cp-badges">
+				{% if guild.rank is not null %}
+					<span class="n-cp-badge">{{ guild.rank }} of {{ guild.link|raw }}</span>
+				{% endif %}
+				<span class="n-cp-badge{% if account.isPremium() %} is-premium{% endif %}">{% if account.isPremium() %}Premium{% else %}Free{% endif %} Account</span>
+				{% set group = player.getGroup() %}
+				{% if group.isLoaded() and group.getId() != 1 %}
+					<span class="n-cp-badge is-staff">{{ group.getName()|capitalize }}</span>
+				{% endif %}
+				{% if skull is not null %}<img class="n-cp-skull" src="images/{{ skull }}.gif" alt="skull">{% endif %}
+				{% if canEdit %}
+					<a class="n-cp-badge n-cp-edit" href="{{ constant('ADMIN_URL') }}?p=players&id={{ player.getId() }}" title="Edit in Admin Panel" target="_blank">Edit</a>
+				{% endif %}
+			</div>
+		</div>
+
+		{# ═══ EQUIPMENT (hero, right side) ═══ #}
+		{% if config.characters.equipment %}
+			<div class="n-cp-eq" aria-label="Equipment">
+				<div class="n-cp-eq-col">
+					<div class="n-cp-slot">{{ equipment[2]|raw }}</div>
+					<div class="n-cp-slot">{{ equipment[6]|raw }}</div>
+					<div class="n-cp-slot">{{ equipment[9]|raw }}</div>
+				</div>
+				<div class="n-cp-eq-col">
+					<div class="n-cp-slot">{{ equipment[1]|raw }}</div>
+					<div class="n-cp-slot">{{ equipment[4]|raw }}</div>
+					<div class="n-cp-slot">{{ equipment[7]|raw }}</div>
+					<div class="n-cp-slot">{{ equipment[8]|raw }}</div>
+				</div>
+				<div class="n-cp-eq-col">
+					<div class="n-cp-slot">{{ equipment[3]|raw }}</div>
+					<div class="n-cp-slot">{{ equipment[5]|raw }}</div>
+					<div class="n-cp-slot">{{ equipment[10]|raw }}</div>
+				</div>
+			</div>
+		{% endif %}
+	</section>
+
+	{# ═══ STATS STRIP ═══ #}
+	{# ═══ RANK LADDER ═══ #}
+	{% if rank %}
+		{% set ranks = config.naruto_shinobi_ranks %}
+		{% set lastId = ranks|keys|last %}
+		{% set next = ranks[rank.id + 1] ?? null %}
+		<section class="n-cp-ladder n-cp-rank-{{ rank.id }}">
+			<div class="n-cp-ladder-head">
+				<div>
+					<span class="n-cp-ladder-label">Shinobi Rank</span>
+					<b class="n-cp-ladder-current">{{ rank.name }}</b>
+				</div>
+				<span class="n-cp-ladder-next">
+					{% if next %}Next: <b>{{ next[1] }}</b>{% else %}Max rank reached{% endif %}
+				</span>
+			</div>
+			<ol class="n-cp-ladder-steps" style="--steps: {{ ranks|length }}; --p: {{ lastId > 0 ? rank.id / lastId : 0 }}">
+				{% for id, r in ranks %}
+					<li class="n-cp-step n-cp-rank-{{ id }}{% if id < rank.id %} is-done{% elseif id == rank.id %} is-current{% endif %}">
+						<span class="n-cp-step-mark">{{ r[0] }}</span>
+						<span class="n-cp-step-name">{{ r[1] }}</span>
+					</li>
+				{% endfor %}
+			</ol>
+		</section>
+	{% endif %}
+
+	<div class="n-cp-stats">
+		{% if config.characters.level %}
+			<div class="n-cp-stat"><span>Level</span><b>{{ player.getLevel() }}</b></div>
+		{% endif %}
+		{% if config.characters.experience %}
+			<div class="n-cp-stat"><span>Experience</span><b>{{ player.getExperience()|number_format(0, '.', ',') }}</b></div>
+		{% endif %}
+		{% if config.characters.magic_level %}
+			<div class="n-cp-stat"><span>Ninjutsu</span><b>{{ player.getMagLevel() }}</b></div>
+		{% endif %}
+		{% if frags_enabled %}
+			<div class="n-cp-stat"><span>Frags</span><b>{{ frags_count }}</b></div>
+		{% endif %}
+		<div class="n-cp-stat"><span>Deaths</span><b>{{ deaths|length }}</b></div>
+	</div>
+
+	<div class="n-cp-grid">
+		<div class="n-cp-col">
+		{# ═══ INFO ═══ #}
+		<section class="n-cp-card">
+			<h2 class="n-cp-card-title">Information</h2>
+			<dl class="n-cp-list">
+				<dt>Sex</dt><dd>{{ sex }}</dd>
+				{% if marriage_enabled %}<dt>Marital status</dt><dd>{{ marital_status }}</dd>{% endif %}
+				<dt>Residence</dt><dd>{{ town ?: '-' }}</dd>
+				{% if config.characters.balance %}<dt>Balance</dt><dd>{{ player.getBalance() }} Gold Coins</dd>{% endif %}
+				{% if house.found %}
+					<dt>House</dt>
+					<dd>
+						<form class="n-cp-inline-form" action="?subtopic=houses&page=view" method="post">
+							{{ csrf() }}
+							<input type="hidden" name="house" value="{{ house.name }}">
+							<button type="submit" class="n-cp-link-btn">{{ house.name ~ house.town ~ house.add }}</button>
+						</form>
+					</dd>
+				{% endif %}
+				<dt>Last login</dt>
+				<dd>{% if player.getLastLogin() == 0 %}Never logged in{% else %}{{ player.getLastLogin()|date("M d Y, H:i") }}{% endif %}</dd>
+				{% if config.characters.creation_date %}
+					<dt>Created</dt><dd>{{ player.getCreated()|date("M d Y, H:i") }}</dd>
+				{% endif %}
+			</dl>
+			{% if comment is not null %}
+				<div class="n-cp-comment">{{ comment|raw }}</div>
+			{% endif %}
+		</section>
+
+		{{ hook('HOOK_CHARACTERS_AFTER_INFORMATIONS') }}
+
+		{# ═══ QUESTS ═══ #}
+		{% if quests_enabled %}
+			<section class="n-cp-card">
+				<h2 class="n-cp-card-title">Quests</h2>
+				<ul class="n-cp-quests">
+					{% for name, done in quests %}
+						<li class="{% if done %}is-done{% endif %}"><span class="n-cp-check">{% if done %}✔{% else %}✖{% endif %}</span>{{ name }}</li>
+					{% endfor %}
+				</ul>
+			</section>
+		{% endif %}
+
+		{{ hook('HOOK_CHARACTERS_AFTER_QUESTS') }}
+
+		{{ hook('HOOK_CHARACTERS_AFTER_EQUIPMENT') }}
+		</div>
+		<div class="n-cp-col">
+		{{ hook('HOOK_CHARACTERS_BEFORE_SKILLS') }}
+
+		{# ═══ SKILLS ═══ #}
+		{% if config.characters.skills and skills %}
+			{% set maxSkill = 1 %}
+			{% for skill in skills %}{% if skill.value > maxSkill %}{% set maxSkill = skill.value %}{% endif %}{% endfor %}
+			<section class="n-cp-card n-cp-card-skills">
+				<h2 class="n-cp-card-title">Skills</h2>
+				<ul class="n-cp-skills">
+					{% for skill in skills %}
+						{% set imgName = (config.naruto_skill_image_aliases[skill.name] ?? skill.name)|lower %}
+						{% set imgFile = config.naruto_skill_images[imgName] ?? null %}
+						<li>
+							<div class="n-cp-skill-head">
+								<span class="n-cp-skill-name">
+									{% if imgFile %}<img src="{{ template_path }}/images/skills/{{ imgFile|url_encode }}" alt="" loading="lazy">{% endif %}
+									{{ skill.name }}
+								</span>
+								<b>{{ skill.value }}</b>
+							</div>
+							<div class="n-cp-bar"><span style="width: {{ (skill.value / maxSkill * 100)|round }}%"></span></div>
+						</li>
+					{% endfor %}
+				</ul>
+			</section>
+		{% endif %}
+
+		{{ hook('HOOK_CHARACTERS_AFTER_SKILLS') }}
+		</div>
+	</div>
+
+	{{ hook('HOOK_CHARACTERS_BEFORE_DEATHS') }}
+
+	{# ═══ DEATHS ═══ #}
+	{% if deaths|length > 0 %}
+		<section class="n-cp-card">
+			<h2 class="n-cp-card-title">Character Deaths</h2>
+			<ul class="n-cp-log">
+				{% for death in deaths %}
+					<li><time>{{ death.time|date("j M Y, H:i") }}</time><span>{{ death.description|raw }}</span></li>
+				{% endfor %}
+			</ul>
+		</section>
+	{% endif %}
+
+	{# ═══ FRAGS ═══ #}
+	{% if frags|length > 0 %}
+		<section class="n-cp-card">
+			<h2 class="n-cp-card-title">Victims</h2>
+			<ul class="n-cp-log">
+				{% for frag in frags %}
+					<li>
+						<time>{{ frag.time|date("j M Y, H:i") }}</time>
+						<span>{{ frag.description|raw }}
+							{% if frag.unjustified %}<em class="n-cp-tag is-bad">Unjustified</em>{% else %}<em class="n-cp-tag is-good">Justified</em>{% endif %}
+						</span>
+					</li>
+				{% endfor %}
+			</ul>
+		</section>
+	{% endif %}
+
+	{{ hook('HOOK_CHARACTERS_BEFORE_SIGNATURE') }}
+
+	{# ═══ SIGNATURE ═══ #}
+	{% if setting('core.signature_enabled') %}
+		<section class="n-cp-card n-cp-signature">
+			<h2 class="n-cp-card-title">Signature</h2>
+			<img src="{{ signature_url }}" alt="Signature for player {{ player.getName() }}">
+			<details>
+				<summary>Show links</summary>
+				<label>Website <input type="text" readonly value="<a href=&quot;{{ player_link }}&quot;><img src=&quot;{{ signature_url }}&quot;></a>" onclick="this.select()"></label>
+				<label>Forum <input type="text" readonly value="[URL={{ player_link }}][IMG]{{ signature_url }}[/IMG][/URL]" onclick="this.select()"></label>
+				<label>Direct link <input type="text" readonly value="{{ signature_url }}" onclick="this.select()"></label>
+			</details>
+		</section>
+	{% endif %}
+
+	{{ hook('HOOK_CHARACTERS_AFTER_SIGNATURE') }}
+
+	{% if not player.isHidden() %}
+		{# ═══ ACCOUNT ═══ #}
+		<section class="n-cp-card">
+			<h2 class="n-cp-card-title">Account Information</h2>
+			<dl class="n-cp-list">
+				{% set realName = account.getRLName() %}
+				{% if realName is not empty %}<dt>Real name</dt><dd>{{ realName }}</dd>{% endif %}
+				{% set realLocation = account.getLocation() %}
+				{% if realLocation is not empty %}<dt>Location</dt><dd>{{ realLocation }}</dd>{% endif %}
+				<dt>Created</dt>
+				<dd>{{ account.getCreated()|date("j F Y, g:i a") }}
+					{% if bannedUntil matches '/^\\d+$/' or bannedUntil == '-1' %}
+						<span class="n-cp-tag is-bad">Banished {% if bannedUntil == '-1' %}forever{% else %}until {{ bannedUntil|date('d F Y, h:s') }}{% endif %}</span>
+					{% else %}
+						{{ bannedUntil|raw }}
+					{% endif %}
+				</dd>
+			</dl>
+		</section>
+
+		{{ hook('HOOK_CHARACTERS_AFTER_ACCOUNT') }}
+
+		{# ═══ OTHER CHARACTERS ═══ #}
+		<section class="n-cp-card">
+			<h2 class="n-cp-card-title">Characters</h2>
+			<div class="n-cp-chars">
+				{% for other in account_players %}
+					{% if not other.isHidden() and (config('characters')['deleted'] or not other.isDeleted()) %}
+						<a class="n-cp-char{% if other.getId() == player.getId() %} is-current{% endif %}" href="{{ getPlayerLink(other.getName(), false) }}">
+							<img src="{{ vocation_image(other.getVocationName()) }}" alt="" loading="lazy">
+							<span class="n-cp-char-info">
+								<b>{{ other.getName() }}</b>
+								<small>Lv {{ other.getLevel() }} · {{ other.getVocationName() }}</small>
+							</span>
+							{% if other.isDeleted() %}<em class="n-cp-tag is-bad">Deleted</em>{% elseif other.isOnline() %}<em class="n-cp-tag is-good">Online</em>{% endif %}
+						</a>
+					{% endif %}
+				{% endfor %}
+			</div>
+		</section>
+	{% endif %}
+
+	{{ hook('HOOK_CHARACTERS_AFTER_CHARACTERS') }}
+</div>
+
+<div class="n-cp-search">{{ search_form|raw }}</div>
