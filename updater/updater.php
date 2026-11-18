@@ -3,9 +3,11 @@ header('Content-Type: application/json; charset=utf-8');
 
 // CONFIG
 $files_dir = "/var/www/html/updater/files";
-$files_url = "http://aerwix.com/updater/files/";
+$files_url = "http://aerwix.com/updater/files"; // sin "/" final: las rutas ya empiezan con "/"
 $files_and_dirs = array("init.lua", "data", "modules", "layouts");
-$checksum_file = "checksums.txt";
+// Junto a updater.php (no en /tmp: php-fpm usa PrivateTmp en Ubuntu).
+// Para forzar recalculo tras subir archivos: rm /var/www/html/updater/checksums.txt
+$checksum_file = __DIR__ . DIRECTORY_SEPARATOR . "checksums.txt";
 $checksum_update_interval = 60;
 
 $binaries = array(
@@ -20,9 +22,17 @@ $binaries = array(
 );
 // CONFIG END
 
+// El cliente (otclient) no soporta Transfer-Encoding: chunked,
+// necesita Content-Length explicito o falla con "invalid number '1fb8'".
+function sendJson($payload) {
+    $json = json_encode($payload);
+    header('Content-Length: ' . strlen($json));
+    echo $json;
+    exit;
+}
+
 function sendError($error) {
-    echo json_encode(array("error" => $error));
-    die();
+    sendJson(array("error" => $error));
 }
 
 $data = json_decode(file_get_contents("php://input"));
@@ -38,7 +48,7 @@ $args     = isset($data->args)     ? $data->args     : array();
 $binary   = isset($binaries[$platform]) ? $binaries[$platform] : "";
 
 $cache = null;
-$cache_file = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $checksum_file;
+$cache_file = $checksum_file;
 
 if (file_exists($cache_file) && (filemtime($cache_file) + $checksum_update_interval > time())) {
     $cache = json_decode(file_get_contents($cache_file), true);
@@ -59,8 +69,10 @@ if (!$cache) {
         $path = '/' . ltrim($path, '/');
         $cache[$path] = hash_file("crc32b", $file->getPathname());
     }
-    file_put_contents($cache_file . ".tmp", json_encode($cache));
-    rename($cache_file . ".tmp", $cache_file);
+    // Si no hay permiso de escritura, seguir sin cache (no imprimir warnings: romperian el JSON)
+    if (@file_put_contents($cache_file . ".tmp", json_encode($cache)) !== false) {
+        @rename($cache_file . ".tmp", $cache_file);
+    }
 }
 
 $ret = array(
@@ -82,4 +94,4 @@ foreach ($cache as $file => $checksum) {
     }
 }
 
-echo json_encode($ret);
+sendJson($ret);
