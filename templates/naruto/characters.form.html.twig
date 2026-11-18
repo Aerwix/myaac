@@ -1,0 +1,7 @@
+<form class="n-cp-find" action="{{ getLink('characters') }}" method="post" role="search">
+	<label class="n-cp-find-label" for="n-cp-find-name">Find a character</label>
+	<div class="n-cp-find-row">
+		<input id="n-cp-find-name" class="n-cp-find-input" type="text" name="name" value="" maxlength="29" autocomplete="off" spellcheck="false" placeholder="Character name" required{% if autofocus %} autofocus{% endif %}>
+		<button type="submit" class="n-cp-find-btn">Search</button>
+	</div>
+</form>
