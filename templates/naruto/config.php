@@ -67,6 +67,10 @@ $config['skill_names'] = [
 	POT::SKILL_CLUB      => 'Taijutsu',
 ];
 
+// Character page skill tiles: bar fills toward this max; color = max split in 6 steps
+// using the shinobi rank palette (E sand … S+ gold). e.g. 150 → steps of 25.
+$config['naruto_skill_max'] = 125;
+
 // Skill images for highscores box: images/skills/<Skill Name>.png (no file = no image).
 // Aliases for skills whose image file has a different name.
 $config['naruto_skill_image_aliases'] = [
