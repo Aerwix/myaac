@@ -18,6 +18,45 @@ $config['naruto_vocation_image_aliases'] = [
 	// 'Vocation Name' => 'ImageFileName',
 ];
 
+// Portrait file name for a vocation (with alias + fallback).
+function naruto_vocation_image(string $vocName): string
+{
+	$aliases = config('naruto_vocation_image_aliases') ?? [];
+	$file = basename($aliases[$vocName] ?? $vocName) . '.png';
+	return is_file(__DIR__ . '/images/characters/' . $file) ? $file : 'ninja_body.png';
+}
+$twig->addFunction(new \Twig\TwigFunction('vocation_image', function ($vocName) use ($template_path) {
+	return BASE_URL . $template_path . '/images/characters/' . rawurlencode(naruto_vocation_image((string)$vocName));
+}));
+
+// Shinobi rank (players.shinobi_rank, 0-6). id => [letter, name]
+$config['naruto_shinobi_ranks'] = [
+	0 => ['E',  'Academy Ninja'],
+	1 => ['D',  'Genin'],
+	2 => ['C',  'Chunin'],
+	3 => ['B',  'Jounin'],
+	4 => ['A',  'Sannin'],
+	5 => ['S',  'Kage'],
+	6 => ['S+', 'Rikudo'],
+];
+// Returns ['id' => int, 'letter' => string, 'name' => string] or null if column missing/unknown.
+$twig->addFunction(new \Twig\TwigFunction('shinobi_rank', function ($player) {
+	global $db;
+	static $hasColumn = null;
+	if ($hasColumn === null) {
+		$hasColumn = $db->hasColumn('players', 'shinobi_rank');
+	}
+	if (!$hasColumn || !$player || !$player->isLoaded()) {
+		return null;
+	}
+	$id = (int)$player->getCustomField('shinobi_rank');
+	$ranks = config('naruto_shinobi_ranks') ?? [];
+	if (!isset($ranks[$id])) {
+		return null;
+	}
+	return ['id' => $id, 'letter' => $ranks[$id][0], 'name' => $ranks[$id][1]];
+}));
+
 // Skill display names (skill id => name). Used by getSkillName() and highscores skill box.
 $config['skill_names'] = [
 	POT::SKILL__MAGLEVEL => 'Ninjutsu',
