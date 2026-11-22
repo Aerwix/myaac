@@ -1,0 +1,75 @@
+{# Characters page (templates/naruto/pages/vocations.php) #}
+<div class="n-vc">
+	<div style="text-align:center"><h2>Characters{% if clan %} &middot; {{ clan }}{% endif %}</h2></div><br/>
+
+	{% if error %}
+	<div class="n-hs-box"><div class="n-vc-error">{{ error }}</div></div>
+	{% else %}
+
+	{% if vocs|length > 0 %}
+	<div class="n-hs-box">
+		<div class="n-hs-box-title">Choose a character</div>
+		<div class="n-jt-clans">
+			<a href="{{ getLink('vocations') }}" class="n-jt-clan{% if not clan %} active{% endif %}">
+				<span class="n-jt-clan-name">All</span>
+			</a>
+			{% for name, v in vocs %}
+			<a href="{{ getLink('vocations') }}?clan={{ name|url_encode }}" class="n-jt-clan{% if clan == name %} active{% endif %}">
+				<img class="n-jt-clan-img" src="{{ constant('BASE_URL') }}{{ template_path }}/images/characters/{{ v.image|url_encode }}" alt="" loading="lazy">
+				<span class="n-jt-clan-name">{{ name }}</span>
+			</a>
+			{% endfor %}
+		</div>
+	</div>
+	{% endif %}
+
+	<div class="n-vc-grid{% if clan %} is-single{% endif %}">
+	{% for v in shown %}
+		<article class="n-vc-card">
+			<header class="n-vc-head">
+				<img class="n-vc-img" src="{{ constant('BASE_URL') }}{{ template_path }}/images/characters/{{ v.image|url_encode }}" alt="{{ v.name }}" loading="lazy">
+				<div class="n-vc-title">
+					<a class="n-vc-name" href="{{ getLink('vocations') }}?clan={{ v.name|url_encode }}">{{ v.name }}</a>
+				</div>
+			</header>
+
+			<div class="n-vc-section">Per level</div>
+			<ul class="n-vc-bars">
+				{% for s in [
+					{key: 'hp',     label: 'Health',   cls: 'hp',     icon: 'heart'},
+					{key: 'chakra', label: 'Chakra',   cls: 'chakra', icon: 'drop'},
+					{key: 'cap',    label: 'Capacity', cls: 'cap',    icon: 'backpack'},
+				] %}
+				<li class="n-vc-bar n-vc-bar-{{ s.cls }}">
+					<span class="n-vc-bar-label"><i class="n-ph n-ph-{{ s.icon }}" aria-hidden="true"></i>{{ s.label }}</span>
+					<span class="n-vc-bar-track"><span class="n-vc-bar-fill" style="width: {{ (attribute(v, s.key) / attribute(max, s.key) * 100)|round }}%"></span></span>
+					<span class="n-vc-bar-value">+{{ attribute(v, s.key) }}</span>
+				</li>
+				{% endfor %}
+			</ul>
+
+			<div class="n-vc-section">Base</div>
+			<dl class="n-vc-stats">
+				<div><dt><i class="n-ph n-ph-sneaker-move" aria-hidden="true"></i>Speed</dt><dd>{{ v.speed }}</dd></div>
+				<div><dt><i class="n-gi n-gi-attack-speed" aria-hidden="true"></i>Attack speed</dt><dd>{{ (v.attackspeed / 1000)|number_format(2) }}s</dd></div>
+				<div class="n-vc-regen-hp"><dt><i class="n-ph n-ph-heartbeat" aria-hidden="true"></i>Health regen</dt><dd>{{ v.hp_regen.amount }} / {{ v.hp_regen.ticks }}s</dd></div>
+				<div class="n-vc-regen-chakra"><dt><i class="n-ph n-ph-drop-half-bottom" aria-hidden="true"></i>Chakra regen</dt><dd>{{ v.chakra_regen.amount }} / {{ v.chakra_regen.ticks }}s</dd></div>
+			</dl>
+
+			{% if v.formula|length > 0 %}
+			<div class="n-vc-section">Combat</div>
+			<dl class="n-vc-stats n-vc-stats-list">
+				{% for k, val in v.formula %}
+				<div class="{% if val > 1 %}is-up{% elseif val < 1 %}is-down{% endif %}"><dt>{% set ic = formulaIcons[k] ?? null %}{% if ic.img is defined %}<img class="n-vc-px" src="{{ constant('BASE_URL') }}{{ template_path }}/images/skills/{{ ic.img|url_encode }}" alt="" width="16" height="16">{% elseif ic.svg is defined %}<i class="n-gi n-gi-{{ ic.svg }}" aria-hidden="true"></i>{% elseif ic.ph is defined %}<i class="n-ph n-ph-{{ ic.ph }}" aria-hidden="true"></i>{% endif %}{{ formulaLabels[k] ?? k }}</dt><dd>x{{ val|number_format(2) }}</dd></div>
+				{% endfor %}
+			</dl>
+			{% endif %}
+		</article>
+	{% else %}
+		<div class="n-hs-box"><div class="n-vc-error">No characters yet.</div></div>
+	{% endfor %}
+	</div>
+	{# star-shuriken icon: game-icons.net, CC BY 3.0 #}
+
+	{% endif %}
+</div>

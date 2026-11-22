@@ -1924,3 +1924,215 @@ label { color: var(--text-dim); font-size: 12px; }
 	.n-jt-evo-level, .n-jt-evo-text { display: inline; }
 	.n-jt-evo-text { margin: 0 0 0 6px; }
 }
+
+/* ═══ Characters page (templates/naruto/vocations.html.twig) ═══ */
+.n-vc-error { padding: 16px 14px; color: var(--text-dim); text-align: center; }
+.n-vc-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 14px;
+}
+.n-vc-grid.is-single { grid-template-columns: minmax(0, 520px); justify-content: center; }
+.n-vc-card {
+	min-width: 0;
+	padding: 14px;
+	border: 1px solid var(--border-soft);
+	border-radius: 4px;
+	background: linear-gradient(180deg, rgba(0, 195, 255, 0.05), rgba(0, 195, 255, 0.015));
+	transition: border-color 0.15s;
+}
+.n-vc-card:hover { border-color: var(--border); }
+.n-vc-head { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+.n-vc-img {
+	width: 56px;
+	height: 56px;
+	max-width: none;
+	flex: none;
+	border: 1px solid var(--border);
+	border-radius: 50%;
+	object-fit: cover;
+	object-position: top;
+	background: var(--bg-panel-a);
+}
+.n-vc-title { min-width: 0; }
+.n-content-body a.n-vc-name { display: block; color: var(--text-bright); font-size: 16px; font-weight: 700; text-decoration: none; overflow-wrap: anywhere; }
+.n-content-body a.n-vc-name:hover { color: var(--cyan-soft); }
+.n-vc-section {
+	margin: 14px 0 6px;
+	color: var(--cyan);
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.n-content-body .n-vc-bars { margin: 0; padding: 0; list-style: none; }
+.n-content-body .n-vc-bar {
+	display: grid;
+	grid-template-columns: 88px 1fr 42px;
+	align-items: center;
+	gap: 8px;
+	margin: 0 0 6px;
+	font-size: 12px;
+}
+.n-vc-bar-label { color: var(--text-dim); }
+.n-vc-bar-track { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.06); overflow: hidden; }
+.n-vc-bar-fill { display: block; height: 100%; border-radius: 3px; background: var(--cyan); }
+.n-vc-bar-hp .n-vc-bar-fill { background: var(--red); }
+.n-vc-bar-chakra .n-vc-bar-fill { background: var(--blue); }
+.n-vc-bar-cap .n-vc-bar-fill { background: var(--orange); }
+.n-vc-bar-value { color: var(--text-bright); font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+
+.n-content-body .n-vc-stats {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 4px 8px;
+	margin: 0;
+}
+.n-vc-stats > div {
+	display: flex;
+	justify-content: space-between;
+	gap: 6px;
+	min-width: 0;
+	padding: 4px 8px;
+	border-radius: 3px;
+	background: rgba(5, 13, 26, 0.6);
+	font-size: 12px;
+}
+.n-content-body .n-vc-stats dt { margin: 0; color: var(--text-dim); font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.n-content-body .n-vc-stats dd { margin: 0; color: var(--text-bright); font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.n-content-body .n-vc-stats .is-up dd { color: var(--green); }
+.n-content-body .n-vc-stats .is-down dd { color: var(--red-soft); }
+
+.n-content-body .n-vc-stats-list { grid-template-columns: 1fr; }
+
+@media (max-width: 420px) {
+	.n-content-body .n-vc-stats { grid-template-columns: 1fr; }
+}
+
+/* Characters page icons: Phosphor Fill (MIT, fonts/Phosphor-LICENSE.txt), subset of glyphs used here.
+   Font only downloads on pages that render an .n-ph element. */
+@font-face {
+	font-family: "Phosphor-Fill";
+	src: url("fonts/Phosphor-Fill.woff2") format("woff2");
+	font-weight: normal;
+	font-style: normal;
+	font-display: block;
+}
+.n-ph {
+	display: inline-block;
+	width: 1.15em;
+	margin-right: 6px;
+	font-family: "Phosphor-Fill" !important;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	text-align: center;
+	vertical-align: -0.15em;
+	speak: never;
+	-webkit-font-smoothing: antialiased;
+}
+.n-ph-heart:before            { content: "\e2a8"; }
+.n-ph-drop:before             { content: "\e210"; }
+.n-ph-backpack:before         { content: "\e922"; }
+.n-ph-sneaker-move:before     { content: "\ed60"; }
+.n-ph-timer:before            { content: "\e492"; }
+.n-ph-heartbeat:before        { content: "\e2ac"; }
+.n-ph-drop-half-bottom:before { content: "\eb40"; }
+.n-ph-first-aid:before        { content: "\e56e"; }
+.n-ph-paw-print:before        { content: "\e648"; }
+.n-ph-sword:before            { content: "\e5ba"; }
+.n-ph-fire:before             { content: "\e242"; }
+.n-ph-pinwheel:before         { content: "\eb9c"; }
+.n-ph-person-simple-run:before { content: "\e730"; }
+.n-ph-shield-checkered:before { content: "\e708"; }
+
+/* icon colors follow the stat they belong to */
+.n-vc-bar-hp .n-ph, .n-vc-stats .n-vc-regen-hp .n-ph { color: var(--red); }
+.n-vc-bar-chakra .n-ph, .n-vc-stats .n-vc-regen-chakra .n-ph { color: var(--blue); }
+.n-vc-bar-cap .n-ph                              { color: var(--orange); }
+.n-vc-stats .n-ph                                { color: var(--cyan-soft); }
+.n-vc-stats .n-ph-first-aid                      { color: var(--green); }
+.n-vc-stats .n-ph-paw-print                      { color: var(--orange); }
+.n-vc-stats .n-ph-sword                          { color: var(--orange); }
+.n-vc-stats .n-ph-fire                           { color: #ff9a2e; } /* flame orange, lighter than --orange */
+.n-vc-stats .n-gi-star-shuriken                  { color: #b9c6d3; } /* kunai steel gray */
+.n-vc-stats .n-gi-dodging                        { color: var(--cyan); }
+
+/* game-icons.net SVGs (images/icons), tinted with currentColor via mask; sized like .n-ph */
+.n-gi {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	margin-right: 7px;
+	vertical-align: -0.25em;
+	background-color: currentColor;
+	-webkit-mask: center / contain no-repeat;
+	mask: center / contain no-repeat;
+}
+/* one rule per icon: url relative to this stylesheet (same origin, no CORS issues) */
+.n-gi-star-shuriken { -webkit-mask-image: url("images/icons/star-shuriken.svg"); mask-image: url("images/icons/star-shuriken.svg"); }
+.n-gi-dodging       { -webkit-mask-image: url("images/icons/dodging.svg");       mask-image: url("images/icons/dodging.svg"); }
+/* Attack speed: sprint + quick-slash side by side, each half with its own color */
+.n-gi-attack-speed {
+	--runner: var(--cyan);
+	--slash: var(--red);
+	position: relative;
+	width: 36px;
+	height: 18px;
+	background: none;
+	-webkit-mask: none;
+	mask: none;
+}
+.n-gi-attack-speed::before,
+.n-gi-attack-speed::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	width: 18px;
+	height: 18px;
+	-webkit-mask: center / contain no-repeat;
+	mask: center / contain no-repeat;
+}
+.n-gi-attack-speed::before { left: 0;  background-color: var(--runner); -webkit-mask-image: url("images/icons/sprint.svg"); mask-image: url("images/icons/sprint.svg"); }
+.n-gi-attack-speed::after  { right: 0; background-color: var(--slash);  -webkit-mask-image: url("images/icons/quick-slash.svg"); mask-image: url("images/icons/quick-slash.svg"); }
+.n-vc-stats .n-ph-person-simple-run              { color: var(--cyan); }
+.n-vc-stats .n-ph-shield-checkered               { color: var(--mint); }
+.n-vc-bar-label { white-space: nowrap; }
+
+/* game pixel icons (images/skills) in Combat rows */
+.n-vc-px {
+	width: 16px;
+	height: 16px;
+	max-width: none;
+	margin-right: 6px;
+	vertical-align: -3px;
+	image-rendering: pixelated;
+}
+
+/* Characters page: larger scale (overrides the base sizes above) */
+.n-vc-grid { grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 18px; }
+.n-vc-grid.is-single { grid-template-columns: minmax(0, 600px); }
+.n-vc-card { padding: 20px; }
+.n-vc-head { gap: 16px; margin-bottom: 6px; }
+.n-vc-img { width: 76px; height: 76px; border-width: 2px; }
+.n-content-body a.n-vc-name { font-size: 21px; }
+.n-vc-section { margin: 18px 0 9px; font-size: 12px; }
+.n-content-body .n-vc-bar { grid-template-columns: 116px 1fr 52px; gap: 10px; margin: 0 0 9px; font-size: 14px; }
+.n-vc-bar-track { height: 9px; border-radius: 5px; }
+.n-vc-bar-fill { border-radius: 5px; }
+.n-vc-bar-value { font-size: 15px; }
+.n-content-body .n-vc-stats { gap: 6px 8px; }
+.n-vc-stats > div { padding: 8px 10px; font-size: 14px; }
+.n-content-body .n-vc-stats dd { font-size: 15px; }
+.n-ph { font-size: 17px; margin-right: 7px; }
+.n-vc-px { width: 24px; height: 24px; margin-right: 7px; vertical-align: -6px; }
+.n-vc-stats-list .n-ph { width: 24px; font-size: 20px; }
+.is-single .n-vc-img { width: 96px; height: 96px; }
+.is-single .n-content-body a.n-vc-name, .is-single a.n-vc-name { font-size: 26px; }
+
+@media (max-width: 420px) {
+	.n-vc-grid { grid-template-columns: 1fr; }
+	.n-vc-card { padding: 16px; }
+	.n-content-body .n-vc-bar { grid-template-columns: 104px 1fr 48px; }
+}

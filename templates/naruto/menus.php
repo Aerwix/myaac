@@ -16,6 +16,7 @@ return [
 		'Bosses [NEW]'  => 'bosses',
 		'Quests [NEW]'  => 'quests',
 		'Jutsus [NEW]'  => 'jutsus',
+		'Characters [NEW]' => 'vocations',
 		'World Map'     => 'world-map',
 	],
 ];

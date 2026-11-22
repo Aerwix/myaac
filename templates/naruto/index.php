@@ -44,7 +44,7 @@ $_topNav = [
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-	<link href="<?php echo $template_path; ?>/style.css" rel="stylesheet" type="text/css" />
+	<link href="<?php echo $template_path; ?>/style.css?v=<?php echo @filemtime(__DIR__ . '/style.css') ?: 1; ?>" rel="stylesheet" type="text/css" />
 	<?php
 	// Vocation portraits for the vocation pickers (account/create, character create)
 	$_vocImgDir = __DIR__ . '/images/characters/';
